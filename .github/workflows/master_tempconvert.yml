@@ -25,6 +25,9 @@ jobs:
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
+      - name: Test
+        run: dotnet test --no-restore --verbosity normal
+
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
@@ -34,24 +37,24 @@ jobs:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
 
-  deploy:
-    runs-on: windows-latest
-    needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+  # deploy:
+  #   runs-on: windows-latest
+  #   needs: build
+  #   environment:
+  #     name: 'Production'
+  #     url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v2
-        with:
-          name: .net-app
+  #   steps:
+  #     - name: Download artifact from build job
+  #       uses: actions/download-artifact@v2
+  #       with:
+  #         name: .net-app
 
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: 'tempconvert'
-          slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3B12AF4A73A9497E9505F327F35935EA }}
-          package: .
+  #     - name: Deploy to Azure Web App
+  #       id: deploy-to-webapp
+  #       uses: azure/webapps-deploy@v2
+  #       with:
+  #         app-name: 'tempconvert'
+  #         slot-name: 'Production'
+  #         publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3B12AF4A73A9497E9505F327F35935EA }}
+  #         package: .
